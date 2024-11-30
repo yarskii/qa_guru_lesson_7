@@ -1,5 +1,5 @@
 import os.path
-from random import choice
+from random import randint
 
 CURRENT_FILE = os.path.abspath(__file__)
 
@@ -10,7 +10,7 @@ TMP_DIR = os.path.join(CURRENT_DIR, "temp")
 if not os.path.exists("temp"):
     os.mkdir("temp")
 
-NUM = choice([1, 2, 3, 4, 5])
+NUM = randint(1, 5)
 
 
 
