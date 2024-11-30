@@ -1,4 +1,4 @@
-from selene import browser, by, be
+from selene import browser
 from selenium import webdriver
 import pytest
 
@@ -9,5 +9,6 @@ def open_browser():
     driver_options.page_load_strategy = 'eager'
     browser.config.driver_options = driver_options
     browser.config.base_url = 'https://getsamplefiles.com'
+    browser.config.headless = True
     browser.config.window_width = 1280
-    browser.config.window_height = 1024
+    browser.config.window_height = 720

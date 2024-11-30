@@ -1,6 +1,7 @@
 pytest
-selene==2.0.0rc7
+selene>=2.0.0rc7
 selenium~=4.26.1
 requests
 webdriver_manager
 pypdf
+openpyxl
