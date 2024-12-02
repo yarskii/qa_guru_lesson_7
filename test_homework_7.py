@@ -6,7 +6,6 @@ from zipfile import ZipFile
 from openpyxl import load_workbook
 from pypdf import PdfReader
 import os.path
-import shutil
 import time
 import csv
 from script_os import TMP_DIR, NUM
@@ -29,53 +28,53 @@ def test_downloading_file(open_browser):
     browser.open(f'/download/csv/sample-{NUM}.csv')
     time.sleep(1)
 
-    with ZipFile('zzip.zip', 'w') as zip_f:
+    assert os.path.isdir(TMP_DIR)
+    assert len(os.listdir(TMP_DIR)) > 0
 
-        for file in os.listdir(TMP_DIR):
-            add_file = os.path.join(TMP_DIR, file)
-            zip_f.write(add_file, arcname=file)
 
-    with ZipFile('zzip.zip') as zip_file:
-        for file in zip_file.namelist():
-
-            if file.split('.')[-1] == 'pdf':
-                with zip_file.open(file) as pdf_file:
-                    reader = PdfReader(pdf_file)
-                    text_pdf = ''
-                    for page in reader.pages:
-                        text_pdf += f'{page.extract_text()} \n'
-
-                assert text_pdf is not None, f"Не удалось извлечь текст из страницы PDF {file}"
-                assert len(reader.pages) > 0, f"PDF файл {file} пуст!"
-
-            elif file.split('.')[-1] == 'csv':
-                with zip_file.open(file) as csv_file:
-                    content = csv_file.read().decode('utf-8-sig')
-                    csvreader = list(csv.reader(content.splitlines()))
-                    text_csv = ''
-                    for line in csvreader:
-                        text_csv += f'{line} \n'
-
-                assert text_csv is not None, f"CSV файл {file} пуст!"
-
-            elif file.split('.')[-1] == 'xlsx':
-                with zip_file.open(file) as xlsx_file:
-                    workbook = load_workbook(xlsx_file)
-                    sheet = workbook.active
-                    text_xlsx = ''
-                    for row in sheet.iter_rows():
-                        for cell in row:
-                            if cell.value is None:
-                                continue
-                            text_xlsx += f'{cell.value} \n'
-
-                assert text_xlsx is not None, f"XLSX файл {file} пуст!"
-
-    assert len(zip_file.namelist()) > 0
+def test_create_zip(create_zip):
     assert os.path.isfile('zzip.zip')
 
-    os.remove('zzip.zip')
-    shutil.rmtree(TMP_DIR)
 
+def test_pdf(create_zip):
+    with ZipFile('zzip.zip') as zip_file:
+        with zip_file.open(f'sample-{NUM}.pdf') as pdf_file:
+            reader = PdfReader(pdf_file)
+            text_pdf = ''
+            for page in reader.pages:
+                text_pdf += f'{page.extract_text()} \n'
+
+        assert text_pdf is not None, f"Не удалось извлечь текст из страницы PDF {f'sample-{NUM}.pdf'}"
+        assert len(reader.pages) > 0, f"PDF файл {f'sample-{NUM}.pdf'} пуст!"
+
+
+def test_csv(create_zip):
+    with ZipFile('zzip.zip') as zip_file:
+        with zip_file.open(f'sample-{NUM}.csv') as csv_file:
+            content = csv_file.read().decode('utf-8-sig')
+            csvreader = list(csv.reader(content.splitlines()))
+            text_csv = ''
+            for line in csvreader:
+                text_csv += f'{line} \n'
+
+        assert text_csv is not None, f"CSV файл {f'sample-{NUM}.csv'} пуст!"
+
+
+def test_xlsx(create_zip):
+    with ZipFile('zzip.zip') as zip_file:
+        with zip_file.open(f'sample-{NUM}.xlsx') as xlsx_file:
+            workbook = load_workbook(xlsx_file)
+            sheet = workbook.active
+            text_xlsx = ''
+            for row in sheet.iter_rows():
+                for cell in row:
+                    if cell.value is None:
+                        continue
+                    text_xlsx += f'{cell.value} \n'
+
+        assert text_xlsx is not None, f"XLSX файл {f'sample-{NUM}.xlsx'} пуст!"
+
+
+def test_del(del_elements):
     assert not os.path.isfile('zzip.zip')
     assert not os.path.isdir(TMP_DIR)

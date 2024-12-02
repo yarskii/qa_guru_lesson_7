@@ -11,7 +11,3 @@ if not os.path.exists("temp"):
     os.mkdir("temp")
 
 NUM = randint(1, 5)
-
-
-
-
