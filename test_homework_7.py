@@ -1,33 +1,12 @@
-from selene import browser
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from zipfile import ZipFile
 from openpyxl import load_workbook
 from pypdf import PdfReader
 import os.path
-import time
 import csv
 from script_os import TMP_DIR, NUM
 
 
-def test_downloading_file(open_browser):
-    options = webdriver.ChromeOptions()
-    prefs = {
-        "download.default_directory": TMP_DIR,
-        "download.prompt_for_download": False
-    }
-    options.add_experimental_option("prefs", prefs)
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-    browser.config.driver = driver
-
-    browser.open(f'/download/pdf/sample-{NUM}.pdf')
-    time.sleep(1)
-    browser.open(f'/download/xlsx/sample-{NUM}.xlsx')
-    time.sleep(1)
-    browser.open(f'/download/csv/sample-{NUM}.csv')
-    time.sleep(1)
-
+def test_downloading_file(downloading_file):
     assert os.path.isdir(TMP_DIR)
     assert len(os.listdir(TMP_DIR)) > 0
 
@@ -73,8 +52,3 @@ def test_xlsx(create_zip):
                     text_xlsx += f'{cell.value} \n'
 
         assert text_xlsx is not None, f"XLSX файл {f'sample-{NUM}.xlsx'} пуст!"
-
-
-def test_del(del_elements):
-    assert not os.path.isfile('zzip.zip')
-    assert not os.path.isdir(TMP_DIR)
