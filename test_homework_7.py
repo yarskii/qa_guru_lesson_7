@@ -23,7 +23,8 @@ def test_pdf(create_zip):
             for page in reader.pages:
                 text_pdf += f'{page.extract_text()} \n'
 
-        assert text_pdf is not None, f"Не удалось извлечь текст из страницы PDF {f'sample-{NUM}.pdf'}"
+        assert text_pdf is not None and text_pdf.strip() != '', f"Не удалось извлечь текст из страницы PDF {f'sample-{NUM}.pdf'}"
+        assert text_pdf.split()[0] in text_pdf
         assert len(reader.pages) > 0, f"PDF файл {f'sample-{NUM}.pdf'} пуст!"
 
 
@@ -34,9 +35,11 @@ def test_csv(create_zip):
             csvreader = list(csv.reader(content.splitlines()))
             text_csv = ''
             for line in csvreader:
-                text_csv += f'{line} \n'
+                text_csv += ', '.join(line) + '\n'
 
+        assert ', '.join(csvreader[0]) in text_csv
         assert text_csv is not None, f"CSV файл {f'sample-{NUM}.csv'} пуст!"
+        assert any(csvreader)
 
 
 def test_xlsx(create_zip):
@@ -51,4 +54,5 @@ def test_xlsx(create_zip):
                         continue
                     text_xlsx += f'{cell.value} \n'
 
+        assert text_xlsx.split()[0] in text_xlsx
         assert text_xlsx is not None, f"XLSX файл {f'sample-{NUM}.xlsx'} пуст!"
