@@ -9,7 +9,7 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import pytest
 
-from script_os import TMP_DIR, NUM
+from script_os import TMP_DIR
 
 
 @pytest.fixture(scope='session')
@@ -38,11 +38,11 @@ def downloading_file(open_browser):
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     browser.config.driver = driver
 
-    browser.open(f'/download/pdf/sample-{NUM}.pdf')
+    browser.open(f'/download/pdf/sample-5.pdf')
     time.sleep(1)
-    browser.open(f'/download/xlsx/sample-{NUM}.xlsx')
+    browser.open(f'/download/xlsx/sample-5.xlsx')
     time.sleep(1)
-    browser.open(f'/download/csv/sample-{NUM}.csv')
+    browser.open(f'/download/csv/sample-5.csv')
     time.sleep(1)
 
     yield
